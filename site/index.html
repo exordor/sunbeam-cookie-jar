@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Sunbeam Cookie Jar is a local-only Chrome extension for managing current-site cookies."
+    />
+    <title>Sunbeam Cookie Jar</title>
+    <link rel="icon" href="./icons/icon128.png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="./">
+        <img src="./icons/icon48.png" alt="" />
+        <span>Sunbeam Cookie Jar</span>
+      </a>
+      <nav>
+        <a href="#screenshots">Screenshots</a>
+        <a href="#privacy">Privacy</a>
+        <a href="./privacy.html">Privacy Policy</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Chrome extension for developers</p>
+          <h1>Local-only cookie management for the current site.</h1>
+          <p class="lede">
+            View, edit, delete, import, and export cookies after explicit site access. Cookie values stay local and are
+            masked by default.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="./privacy.html">Privacy Policy</a>
+            <a class="button secondary" href="https://github.com/exordor/sunbeam-cookie-jar">GitHub Project</a>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <img
+            src="./store-assets/screenshots/01-current-site-cookie-table-1280x800.png"
+            alt="Sunbeam Cookie Jar current-site cookie table"
+          />
+        </div>
+      </section>
+
+      <section class="feature-band" aria-label="Highlights">
+        <div>
+          <span class="metric">No backend</span>
+          <p>No servers, analytics, tracking, cloud sync, or remote code.</p>
+        </div>
+        <div>
+          <span class="metric">Optional access</span>
+          <p>Host access is requested for the current site only after user action.</p>
+        </div>
+        <div>
+          <span class="metric">Safe exports</span>
+          <p>Real cookie values require a warning; redacted JSON is available for sharing.</p>
+        </div>
+      </section>
+
+      <section id="screenshots" class="section">
+        <div class="section-header">
+          <p class="eyebrow">Product screenshots</p>
+          <h2>Built around a compact table workflow.</h2>
+        </div>
+        <div class="screenshot-grid">
+          <figure>
+            <img
+              src="./store-assets/screenshots/02-export-warning-1280x800.png"
+              alt="Export warning before real cookie value download"
+            />
+            <figcaption>Explicit warning before real-value export.</figcaption>
+          </figure>
+          <figure>
+            <img src="./store-assets/screenshots/03-export-formats-1280x800.png" alt="Supported cookie export formats" />
+            <figcaption>Multiple developer-friendly export formats.</figcaption>
+          </figure>
+          <figure>
+            <img src="./store-assets/screenshots/04-import-preview-1280x800.png" alt="Import preview diff" />
+            <figcaption>Preview creates, overwrites, skipped rows, and permission needs.</figcaption>
+          </figure>
+          <figure>
+            <img src="./store-assets/screenshots/05-local-only-privacy-1280x800.png" alt="Local-only privacy highlights" />
+            <figcaption>Local-only behavior with optional per-site access.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="privacy" class="privacy-panel">
+        <div>
+          <p class="eyebrow">Privacy posture</p>
+          <h2>Designed for local development work.</h2>
+        </div>
+        <ul>
+          <li>No backend, analytics, tracking, cloud sync, or remote code.</li>
+          <li>No automatic background cookie export.</li>
+          <li>No required <code>&lt;all_urls&gt;</code> permission.</li>
+          <li><code>chrome.storage.local</code> is used only for UI settings, not cookie values.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      <span>Sunbeam Cookie Jar</span>
+      <a href="./privacy.html">Privacy Policy</a>
+    </footer>
+  </body>
+</html>

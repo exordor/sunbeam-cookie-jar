@@ -79,3 +79,23 @@ Chrome Web Store submission materials are in:
 - `docs/privacy-policy.md`
 - `docs/release-checklist.md`
 - `store-assets/`
+
+## GitHub Pages
+
+Build the public showcase site locally:
+
+```bash
+npm run build:pages
+```
+
+The deployed site is configured for:
+
+```text
+https://exordor.github.io/sunbeam-cookie-jar/
+```
+
+The public privacy policy URL is:
+
+```text
+https://exordor.github.io/sunbeam-cookie-jar/privacy.html
+```

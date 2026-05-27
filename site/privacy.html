@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Privacy policy for Sunbeam Cookie Jar." />
+    <title>Privacy Policy - Sunbeam Cookie Jar</title>
+    <link rel="icon" href="./icons/icon128.png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="./">
+        <img src="./icons/icon48.png" alt="" />
+        <span>Sunbeam Cookie Jar</span>
+      </a>
+      <nav>
+        <a href="./">Home</a>
+        <a href="https://github.com/exordor/sunbeam-cookie-jar">GitHub Project</a>
+      </nav>
+    </header>
+
+    <main class="policy-layout">
+      <article class="policy-card">
+        <p class="eyebrow">Last updated: May 27, 2026</p>
+        <h1>Privacy Policy</h1>
+        <p>
+          Sunbeam Cookie Jar is a local-only Chrome extension for developers who need to manage cookies for the current
+          site.
+        </p>
+
+        <h2>Data Collection</h2>
+        <p>Sunbeam Cookie Jar does not collect, transmit, sell, rent, or share user data.</p>
+        <p>
+          The extension has no backend, no analytics, no tracking, no cloud sync, no remote code, and no automatic
+          background cookie export.
+        </p>
+
+        <h2>Cookie Access</h2>
+        <p>
+          The extension can access cookies only for sites where the user grants access. Cookie access is used only to
+          view current-site cookies, edit cookies, delete selected cookies, import supported Lossless JSON cookie files,
+          and export selected or current-site cookies in user-selected formats.
+        </p>
+        <p>Cookie values are masked by default in the popup. Revealing values is a user action for the current session.</p>
+
+        <h2>Local Storage</h2>
+        <p>
+          The extension uses <code>chrome.storage.local</code> only for local UI settings, such as the preferred export
+          format. It does not store cookie values in <code>chrome.storage.local</code>.
+        </p>
+
+        <h2>Exports</h2>
+        <p>
+          Exports are created only after user action and are downloaded locally by the browser. Some export formats can
+          contain real cookie values. Before those exports are created, the extension shows a warning. Redacted JSON
+          replaces cookie values with <code>***REDACTED***</code>.
+        </p>
+
+        <h2>Imports</h2>
+        <p>
+          The extension currently imports only Lossless JSON v1 files. Imports are previewed before changes are applied.
+          Overwriting existing cookies requires confirmation.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          For support, use the support contact configured in the Chrome Web Store listing or the project's GitHub issue
+          tracker if available.
+        </p>
+      </article>
+    </main>
+
+    <footer>
+      <span>Sunbeam Cookie Jar</span>
+      <a href="./">Home</a>
+    </footer>
+  </body>
+</html>

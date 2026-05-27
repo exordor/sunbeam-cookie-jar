@@ -70,7 +70,11 @@ Export:
 Exports are local Blob downloads created only after user action. Real-value export formats show a warning before download. Redacted JSON replaces cookie values with `***REDACTED***`.
 
 Privacy policy:
-Use `docs/privacy-policy.md` as the policy text. Host it at a public URL before submitting if the Chrome Web Store dashboard requires a URL.
+Use `docs/privacy-policy.md` as the source text. The GitHub Pages URL is:
+
+```text
+https://exordor.github.io/sunbeam-cookie-jar/privacy.html
+```
 
 ## Permission Justifications
 
