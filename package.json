@@ -9,6 +9,8 @@
     "build:pages": "node scripts/build-pages.mjs",
     "generate:store-assets": "node scripts/generate-store-assets.mjs",
     "verify:store-assets": "node scripts/verify-store-assets.mjs",
+    "verify:release-version": "node scripts/verify-release-version.mjs",
+    "write:release-notes": "node scripts/write-release-notes.mjs",
     "package:store": "npm run build && node scripts/package-store.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

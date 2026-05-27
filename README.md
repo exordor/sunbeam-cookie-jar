@@ -138,6 +138,17 @@ Submission materials:
 - `docs/release-checklist.md`
 - `store-assets/`
 
+## GitHub Releases
+
+Releases are automated from stable SemVer tags.
+
+```bash
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+The release workflow verifies that the tag, `package.json`, and `public/manifest.json` all use the same version. It then runs the full validation suite, packages the extension zip, generates a SHA-256 checksum, writes release notes, and publishes the GitHub Release.
+
 ## Website
 
 The public project website is deployed with GitHub Pages:

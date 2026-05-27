@@ -3,6 +3,7 @@
 ## Before Upload
 
 - Run `npm ci`
+- Update `package.json` and `public/manifest.json` to the same SemVer version
 - Run `npm run typecheck`
 - Run `npm test`
 - Run `npm run build`
@@ -29,6 +30,28 @@
 - Upload promotional images from `store-assets/promotional/`
 - Copy listing text from `STORE_SUBMISSION.md`
 - Copy privacy policy from `docs/privacy-policy.md`
+
+## GitHub Release
+
+Releases are automated from stable SemVer tags. Do not use a high version number for early releases; use `v0.x.y` until the extension API and user-facing behavior are stable enough for `v1.0.0`.
+
+Example:
+
+```bash
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+The release workflow will:
+
+- Verify the tag is in `vX.Y.Z` format
+- Verify the tag version matches `package.json`
+- Verify the tag version matches `public/manifest.json`
+- Run typecheck, unit tests, build, store asset verification, and GitHub E2E
+- Audit production manifest permissions
+- Build the Chrome Web Store zip
+- Generate a SHA-256 checksum
+- Publish a GitHub Release with both assets attached
 
 ## Manual Smoke Test
 
