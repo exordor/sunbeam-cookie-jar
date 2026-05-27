@@ -11,6 +11,8 @@ jobs:
   verify:
     name: Verify and package extension
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.58.2-noble
 
     steps:
       - name: Checkout
@@ -33,9 +35,6 @@ jobs:
 
       - name: Build extension
         run: npm run build
-
-      - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
 
       - name: GitHub extension E2E
         run: xvfb-run --auto-servernum npm run test:e2e:github
