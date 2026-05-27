@@ -33,7 +33,7 @@ For a local unpacked install, open `chrome://extensions`, enable Developer Mode,
 
 ## GitHub E2E Test
 
-The GitHub Playwright test launches Chromium with the unpacked extension, opens `https://github.com/`, grants optional host access, reads GitHub cookies through the real Chrome extension APIs, opens the action popup, and captures screenshots.
+The GitHub Playwright test launches Chromium with the unpacked extension, opens `https://github.com/`, reads GitHub cookies through the real Chrome extension APIs, and captures screenshots. In CI, it uses a copied test fixture with GitHub host access pregranted so Chrome's native permission prompt does not require a human click. The production manifest still uses optional host permissions only.
 
 ```bash
 npm run build
@@ -57,3 +57,25 @@ test-results/github-export-warning.png
 - Redacted JSON
 
 Lossless JSON preserves cookie fields including `storeId` and `partitionKey` when present.
+
+## Chrome Web Store
+
+Generate and verify store assets:
+
+```bash
+npm run generate:store-assets
+npm run verify:store-assets
+```
+
+Create the upload zip:
+
+```bash
+npm run package:store
+```
+
+Chrome Web Store submission materials are in:
+
+- `STORE_SUBMISSION.md`
+- `docs/privacy-policy.md`
+- `docs/release-checklist.md`
+- `store-assets/`

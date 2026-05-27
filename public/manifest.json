@@ -6,7 +6,19 @@
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs6lfl7DCw9U7dTB9vnhUZZIo+AHQv8jQEyW4dBSLMLyxE95P5zaQnYXCNsQztKS+OmNoakRCfxutK4v+oMoXAaKayhS6lHw2Z4D277PJmK7Bkjmpk+5LA4DXHsg3Hc2YuvoJW7tQhx+mq0kHxoLCj/qPbrZuBYicon5Y1Ly+18sOc19kP5XTYqNWIjQSGNdfSzEQPQ248XqclqtCVFNveCFjngPgwc4BblLxN3EyABMNaZh45FWIHwT6s6IbO0mQpUdiLYOe3SQhm5HR375TgYGpeL8uhQW8bdKfsXcDHP9F3op2tMhIJfF4Jka3TJPfS+QkBrdFYDerI9eJ36EBnQIDAQAB",
   "action": {
     "default_title": "Sunbeam Cookie Jar",
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   },
   "permissions": ["cookies", "storage", "activeTab"],
   "optional_host_permissions": ["http://*/*", "https://*/*"]

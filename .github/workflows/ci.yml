@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout
@@ -35,6 +37,9 @@ jobs:
 
       - name: Build extension
         run: npm run build
+
+      - name: Verify store assets
+        run: npm run verify:store-assets
 
       - name: GitHub extension E2E
         env:
@@ -63,11 +68,26 @@ jobs:
           }
           NODE
 
+      - name: Package Chrome Web Store zip
+        run: npm run package:store
+
       - name: Upload extension artifact
         uses: actions/upload-artifact@v4
         with:
           name: sunbeam-cookie-jar-dist
           path: dist/
+
+      - name: Upload Chrome Web Store zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: sunbeam-cookie-jar-store-zip
+          path: release/*.zip
+
+      - name: Upload store assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: sunbeam-cookie-jar-store-assets
+          path: store-assets/
 
       - name: Upload test screenshots
         if: always()

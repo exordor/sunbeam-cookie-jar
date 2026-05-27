@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
+    "generate:store-assets": "node scripts/generate-store-assets.mjs",
+    "verify:store-assets": "node scripts/verify-store-assets.mjs",
+    "package:store": "npm run build && node scripts/package-store.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:e2e:github": "node scripts/test-github-extension.mjs"
