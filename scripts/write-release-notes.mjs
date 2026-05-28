@@ -9,7 +9,7 @@ if (!/^v\d+\.\d+\.\d+$/.test(tag)) {
 
 const version = tag.slice(1);
 const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
-const shortSha = execFileSync("git", ["rev-parse", "--short", "HEAD"], { encoding: "utf8" }).trim();
+const shortSha = shortCommitSha();
 const zipName = `${pkg.name}-${version}.zip`;
 const checksumName = `${pkg.name}-${version}.sha256`;
 const outDir = path.join(process.cwd(), "release");
@@ -71,3 +71,10 @@ This release was built from commit \`${shortSha}\` and verified with:
 
 fs.writeFileSync(outPath, notes);
 console.log(`Wrote ${path.relative(process.cwd(), outPath)}`);
+
+function shortCommitSha() {
+  if (process.env.GITHUB_SHA) {
+    return process.env.GITHUB_SHA.slice(0, 7);
+  }
+  return execFileSync("git", ["rev-parse", "--short", "HEAD"], { encoding: "utf8" }).trim();
+}
