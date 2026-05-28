@@ -2,11 +2,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   getActivePage,
   getStoredExportFormat,
-  hasOriginPermission,
+  hasOriginPermissions,
   isChromeExtensionRuntime,
+  loadCookiesForSite,
   loadCookiesForUrl,
   removeCookie,
-  requestOriginPermission,
   requestOriginPermissions,
   setCookie,
   setStoredExportFormat,
@@ -29,7 +29,8 @@ const EXPORT_FORMATS: Array<{ value: ExportFormat; label: string }> = [
 const demoPage: ActivePage = {
   url: "https://example.test/account",
   origin: "https://example.test",
-  originPattern: "https://example.test/*"
+  siteDomain: "example.test",
+  siteOriginPatterns: ["http://example.test/*", "http://*.example.test/*", "https://example.test/*", "https://*.example.test/*"]
 };
 
 const demoCookies: SerializableCookie[] = [
@@ -115,14 +116,14 @@ export default function App() {
           setExportFormat(storedFormat);
         }
 
-        const hasAccess = await hasOriginPermission(page.originPattern);
+        const hasAccess = await hasOriginPermissions(page.siteOriginPatterns);
         if (cancelled) {
           return;
         }
 
         setAccessGranted(hasAccess);
         if (hasAccess) {
-          const loadedCookies = await loadCookiesForUrl(page.url);
+          const loadedCookies = await loadCookiesForSite(page);
           if (!cancelled) {
             setCookies(loadedCookies);
           }
@@ -170,7 +171,7 @@ export default function App() {
       return;
     }
 
-    const loadedCookies = await loadCookiesForUrl(activePage.url);
+    const loadedCookies = await loadCookiesForSite(activePage);
     setCookies(loadedCookies);
     setSelectedKeys((previous) => {
       const available = new Set(loadedCookies.map(cookieIdentityKey));
@@ -188,7 +189,7 @@ export default function App() {
     setLoading(true);
 
     try {
-      const granted = runtimeMode === "preview" ? true : await requestOriginPermission(activePage.originPattern);
+      const granted = runtimeMode === "preview" ? true : await requestOriginPermissions(activePage.siteOriginPatterns);
       setAccessGranted(granted);
       if (!granted) {
         setStatus("Access was not granted.");
@@ -358,14 +359,14 @@ export default function App() {
         currentUrl: activePage.url,
         existingCookies: cookies,
         allowOriginalDomains: false,
-        grantedOrigins: [activePage.originPattern]
+        grantedOrigins: activePage.siteOriginPatterns
       });
       setImportState({
         file: parsed,
         preview,
         allowOriginalDomains: false,
         overwriteConfirmed: false,
-        grantedOrigins: [activePage.originPattern]
+        grantedOrigins: activePage.siteOriginPatterns
       });
     } catch (caught) {
       setError(errorMessage(caught));
@@ -507,7 +508,7 @@ export default function App() {
       <section className="access-row" aria-label="Site access">
         <div>
           <strong>{accessGranted ? "Site access granted" : "Site access required"}</strong>
-          <span>{activePage?.originPattern ?? "Open an http or https page"}</span>
+          <span>{accessPatternLabel(activePage)}</span>
         </div>
         <button className="primary-button" type="button" onClick={() => void grantAccess()} disabled={!activePage || accessGranted || loading}>
           Grant access to this site
@@ -547,7 +548,7 @@ export default function App() {
           Export selected
         </button>
         <button type="button" onClick={() => startExport("current-tab-url")} disabled={!accessGranted || !canExportCurrentOrigin}>
-          Export current origin
+          Export current site
         </button>
         <button type="button" onClick={() => selectedCookie && setEditCookie(selectedCookie)} disabled={!accessGranted || !selectedCookie}>
           Edit selected
@@ -652,7 +653,7 @@ export default function App() {
       </section>
 
       <footer className="footer">
-        <span>{cookies.length} current URL cookie{cookies.length === 1 ? "" : "s"}</span>
+        <span>{cookies.length} site cookie{cookies.length === 1 ? "" : "s"}</span>
         <span>{selectedCookies.length} selected</span>
       </footer>
 
@@ -902,6 +903,15 @@ function errorMessage(error: unknown): string {
 
 function isExportFormat(value: unknown): value is ExportFormat {
   return typeof value === "string" && EXPORT_FORMATS.some((format) => format.value === value);
+}
+
+function accessPatternLabel(page: ActivePage | null): string {
+  if (!page) {
+    return "Open an http or https page";
+  }
+  return page.siteOriginPatterns.some((pattern) => pattern.includes("*."))
+    ? `${page.siteDomain} and subdomains`
+    : page.siteDomain;
 }
 
 function mergeCookies(base: SerializableCookie[], incoming: SerializableCookie[]): SerializableCookie[] {

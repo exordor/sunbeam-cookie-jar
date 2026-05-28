@@ -105,5 +105,5 @@ npm run package:store
 Upload the generated zip:
 
 ```text
-release/sunbeam-cookie-jar-0.1.0.zip
+release/sunbeam-cookie-jar-0.1.1.zip
 ```

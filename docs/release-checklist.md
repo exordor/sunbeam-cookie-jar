@@ -24,7 +24,7 @@
 
 ## Chrome Web Store Upload
 
-- Upload `release/sunbeam-cookie-jar-0.1.0.zip`
+- Upload `release/sunbeam-cookie-jar-0.1.1.zip`
 - Upload `public/icons/icon128.png` if the dashboard requests a separate icon
 - Upload screenshots from `store-assets/screenshots/`
 - Upload promotional images from `store-assets/promotional/`

@@ -104,6 +104,18 @@ describe("import preview", () => {
     expect(preview.items[0].status).toBe("create");
   });
 
+  it("treats wildcard site permissions as granting sibling subdomains", () => {
+    const preview = buildImportPreview(file([otherDomainCookie]), {
+      currentUrl,
+      existingCookies: [],
+      allowOriginalDomains: true,
+      grantedOrigins: ["https://*.example.test/*"]
+    });
+
+    expect(preview.counts.create).toBe(1);
+    expect(preview.permissionOrigins).toEqual([]);
+  });
+
   it("validates malformed cookies", () => {
     const preview = buildImportPreview(file([{ ...sameDomainCookie, path: "missing-slash" }]), {
       currentUrl,

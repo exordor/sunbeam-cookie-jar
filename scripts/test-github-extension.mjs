@@ -11,6 +11,7 @@ const outputDir = path.join(rootDir, "test-results");
 const extensionId = "fddfnafaafnlopplcjppfianbojldbbc";
 const useActionPopup = process.env.USE_EXTENSION_ACTION_POPUP === "1";
 const pregrantGithubHost = process.env.PREGRANT_GITHUB_HOST !== "0";
+const githubSiteOrigins = ["http://github.com/*", "https://github.com/*", "http://*.github.com/*", "https://*.github.com/*"];
 
 const hardTimeout = setTimeout(() => {
   console.error("GitHub extension E2E timed out.");
@@ -69,9 +70,12 @@ try {
         button.id = "grant-github-permission-test";
         button.textContent = "Grant GitHub test permission";
         button.addEventListener("click", () => {
-          chrome.permissions.request({ origins: ["https://github.com/*"] }, (granted) => {
-            resolve({ granted, lastError: chrome.runtime.lastError?.message ?? null });
-          });
+          chrome.permissions.request(
+            { origins: ["http://github.com/*", "https://github.com/*", "http://*.github.com/*", "https://*.github.com/*"] },
+            (granted) => {
+              resolve({ granted, lastError: chrome.runtime.lastError?.message ?? null });
+            }
+          );
         });
         document.body.appendChild(button);
       });
@@ -86,14 +90,14 @@ try {
   }
 
   log("Checking chrome.cookies access for GitHub");
-  const apiResult = await controller.evaluate(async () => {
-    const hasPermission = await chrome.permissions.contains({ origins: ["https://github.com/*"] });
-    const cookies = await chrome.cookies.getAll({ url: "https://github.com/" });
+  const apiResult = await controller.evaluate(async (origins) => {
+    const hasPermission = await chrome.permissions.contains({ origins });
+    const cookies = await chrome.cookies.getAll({ domain: "github.com" });
     return {
       hasPermission,
       cookieNames: cookies.map((cookie) => cookie.name)
     };
-  });
+  }, githubSiteOrigins);
 
   if (!apiResult.hasPermission || !apiResult.cookieNames.includes("lcm_playwright_test")) {
     throw new Error(`Chrome API cookie check failed: ${JSON.stringify(apiResult)}`);
@@ -123,7 +127,7 @@ try {
     await cdp.send(
       "Runtime.evaluate",
       {
-        expression: `Array.from(document.querySelectorAll("button")).find((button) => button.textContent === "Export current origin")?.click()`,
+        expression: `Array.from(document.querySelectorAll("button")).find((button) => button.textContent === "Export current site")?.click()`,
         returnByValue: true
       },
       sessionId
@@ -138,7 +142,7 @@ try {
     await waitForPageText(controller, ["Sunbeam Cookie Jar", "https://github.com", "Site access granted", "lcm_playwright_test"]);
     await controller.screenshot({ path: path.join(outputDir, "github-popup.png"), fullPage: true });
 
-    await clickButtonByText(controller, "Export current origin");
+    await clickButtonByText(controller, "Export current site");
     await waitForPageText(controller, ["Export real cookie values?", "Lossless JSON"]);
     await controller.screenshot({ path: path.join(outputDir, "github-export-warning.png"), fullPage: true });
   }
@@ -230,7 +234,7 @@ function createPregrantedGithubFixture(sourcePath) {
   const manifestPath = path.join(fixturePath, "manifest.json");
   const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
   // CI cannot click Chrome's native optional-permission prompt, so pregrant only in this copied fixture.
-  manifest.host_permissions = ["https://github.com/*"];
+  manifest.host_permissions = githubSiteOrigins;
   fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
   return fixturePath;
 }

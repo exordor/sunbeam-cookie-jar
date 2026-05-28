@@ -1,12 +1,14 @@
-import { toRemoveDetails, toSetDetails } from "./cookieIdentity";
+import { cookieIdentityKey, toRemoveDetails, toSetDetails } from "./cookieIdentity";
 import { toSerializableCookie } from "./exportFormats";
+import { siteDomainFromHostname, siteOriginPatterns } from "./originPatterns";
 import type { SerializableCookie } from "./types";
 
 export interface ActivePage {
   tabId?: number;
   url: string;
   origin: string;
-  originPattern: string;
+  siteDomain: string;
+  siteOriginPatterns: string[];
 }
 
 export function isChromeExtensionRuntime(): boolean {
@@ -30,11 +32,14 @@ export async function getActivePage(): Promise<ActivePage> {
     throw new Error("Cookie access is available for http and https pages.");
   }
 
+  const siteDomain = siteDomainFromHostname(parsed.hostname);
+
   return {
     tabId: tab.id,
     url: parsed.href,
     origin: parsed.origin,
-    originPattern: `${parsed.origin}/*`
+    siteDomain,
+    siteOriginPatterns: siteOriginPatterns(siteDomain, parsed.protocol)
   };
 }
 
@@ -76,28 +81,15 @@ async function queryTabs(queryInfo: chrome.tabs.QueryInfo): Promise<chrome.tabs.
   });
 }
 
-export async function hasOriginPermission(originPattern: string): Promise<boolean> {
+export async function hasOriginPermissions(originPatterns: string[]): Promise<boolean> {
   return new Promise((resolve, reject) => {
-    chrome.permissions.contains({ origins: [originPattern] }, (hasPermission) => {
+    chrome.permissions.contains({ origins: originPatterns }, (hasPermission) => {
       const error = chrome.runtime.lastError;
       if (error) {
         reject(new Error(error.message));
         return;
       }
       resolve(hasPermission);
-    });
-  });
-}
-
-export async function requestOriginPermission(originPattern: string): Promise<boolean> {
-  return new Promise((resolve, reject) => {
-    chrome.permissions.request({ origins: [originPattern] }, (granted) => {
-      const error = chrome.runtime.lastError;
-      if (error) {
-        reject(new Error(error.message));
-        return;
-      }
-      resolve(granted);
     });
   });
 }
@@ -116,8 +108,21 @@ export async function requestOriginPermissions(originPatterns: string[]): Promis
 }
 
 export async function loadCookiesForUrl(url: string): Promise<SerializableCookie[]> {
-  const cookies = await new Promise<chrome.cookies.Cookie[]>((resolve, reject) => {
-    chrome.cookies.getAll({ url }, (result) => {
+  return (await getCookies({ url })).map(toSerializableCookie);
+}
+
+export async function loadCookiesForSite(page: ActivePage): Promise<SerializableCookie[]> {
+  const [domainCookies, urlCookies] = await Promise.all([
+    getCookies({ domain: page.siteDomain }),
+    getCookies({ url: page.url })
+  ]);
+
+  return uniqueCookies([...domainCookies, ...urlCookies].map(toSerializableCookie));
+}
+
+async function getCookies(details: chrome.cookies.GetAllDetails): Promise<chrome.cookies.Cookie[]> {
+  return new Promise((resolve, reject) => {
+    chrome.cookies.getAll(details, (result) => {
       const error = chrome.runtime.lastError;
       if (error) {
         reject(new Error(error.message));
@@ -126,8 +131,14 @@ export async function loadCookiesForUrl(url: string): Promise<SerializableCookie
       resolve(result);
     });
   });
+}
 
-  return cookies.map(toSerializableCookie);
+function uniqueCookies(cookies: SerializableCookie[]): SerializableCookie[] {
+  const map = new Map<string, SerializableCookie>();
+  for (const cookie of cookies) {
+    map.set(cookieIdentityKey(cookie), cookie);
+  }
+  return [...map.values()];
 }
 
 export async function removeCookie(cookie: SerializableCookie): Promise<void> {

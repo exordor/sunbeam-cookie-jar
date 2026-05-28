@@ -1,4 +1,5 @@
 import { cookieIdentityKey, cookieMatchesUrl, cookieTargetOrigin } from "./cookieIdentity";
+import { originPatternMatchesOrigin } from "./originPatterns";
 import type { ImportPreview, ImportPreviewItem, LosslessExportV1, SerializableCookie } from "./types";
 
 interface PreviewOptions {
@@ -53,7 +54,7 @@ export function buildImportPreview(importFile: LosslessExportV1, options: Previe
       continue;
     }
 
-    if (!matchesCurrentUrl && !granted.has(`${targetOrigin}/*`)) {
+    if (!matchesCurrentUrl && !hasGrantedOrigin(targetOrigin, granted)) {
       permissionOrigins.add(`${targetOrigin}/*`);
       items.push({
         cookie,
@@ -81,6 +82,13 @@ export function buildImportPreview(importFile: LosslessExportV1, options: Previe
 
 export function applyablePreviewItems(preview: ImportPreview): ImportPreviewItem[] {
   return preview.items.filter((item) => item.status === "create" || item.status === "overwrite");
+}
+
+function hasGrantedOrigin(targetOrigin: string, grantedOrigins: Set<string>): boolean {
+  if (grantedOrigins.has(`${targetOrigin}/*`)) {
+    return true;
+  }
+  return [...grantedOrigins].some((originPattern) => originPatternMatchesOrigin(originPattern, targetOrigin));
 }
 
 function countItems(items: ImportPreviewItem[]): ImportPreview["counts"] {
